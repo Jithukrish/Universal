@@ -1,0 +1,70 @@
+    .custom-popup {
+        border-radius: 20px !important;  
+        width: 500px !important;  
+        background-color: #ffffff !important;  
+        padding: 20px !important;
+    }
+    .swal2-x-mark{
+        color: #ff0720;
+    }
+
+    .custom-title {
+        color: #ff0720 !important; 
+        font-size: 24px !important;  
+    }
+
+    .custom-content {
+        color: #ff051e !important;  
+        font-size: 18px !important;  
+    }
+
+    .custom-button {
+        background-color: #b10314 !important;  
+        color: white !important;  
+        border-radius: 10px !important; 
+        width: 100px; 
+    }
+
+    .custom-button:hover {
+        background-color: #fd011a !important;  
+    }
+
+
+    /*sucess aler6t*/
+    /* Custom Popup */
+.custom-popup1 {
+    border-radius: 20px !important;  
+    width: 400px !important;  
+    background-color: #ffffff !important;  /* White background */
+    padding: 20px !important;
+}
+
+/* Custom Title */
+.custom-title1 {
+    color: #28a745 !important;  /* Green color for success */
+    font-size: 24px !important;  
+}
+
+/* Custom Content */
+.custom-content1 {
+    color: #4caf50 !important;  /* Lighter green */
+    font-size: 18px !important;  
+}
+
+/* Custom Button */
+.custom-button1 {
+    background-color: #28a745 !important;  /* Green button */
+    color: white !important;  
+    border-radius: 10px !important;  
+    padding: 15px 30px !important;  /* Increased padding for larger button */
+    font-size: 18px !important;  
+    min-width: 150px !important;  /* Set minimum width */
+    transition: background-color 0.3s ease;
+}
+
+/* Hover Effect for Button */
+.custom-button1:hover {
+    background-color: #218838 !important;  /* Darker green for hover */
+}
+
+
