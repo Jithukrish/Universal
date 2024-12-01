@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'job',
     'Users',
+    'django_celery_results',
     'rest_framework',
     'rest_framework.authtoken',
 ]
@@ -178,10 +179,12 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 # Celery results backend (optional)
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
+CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 # Timezone
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_RESULT_BACKEND = 'django-db'
 
 # Celery imports for tasks
 CELERY_IMPORTS = ('Users.tasks',)

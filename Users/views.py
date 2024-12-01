@@ -58,49 +58,18 @@ class EmployerRegistrationView(View):
         user.is_active = False
         user.save()
 
-        messages.success(
-            request, 
-            'Your Account has been created successfully! Please check your email to confirm your email address and activate your account.'
+        messages.success(request, 'Your Account has been created successfully! Please check your email to confirm your email address and activate your account.'
         )
 
-        # Welcome email
-        # subject = 'Welcome to Universal Job Portal!'
-        # message = (
-        #     f"Hello {user.email}!\n"
-        #     "Welcome to Universal!\nThank you for visiting our website. "
-        #     "We have sent you a confirmation email; please confirm your email address.\n\n"
-        #     "Thank you,\nUniversal Team"
-        # )
-        # from_email = settings.EMAIL_HOST_USER
-        # send_mail(subject, message, from_email, [user.email], fail_silently=True)
-
-        # current_site = get_current_site(request)
-        # email_subject = "Confirm your Email @ Universal - Job Portal Login!"
-        # message2 = render_to_string('email_confirmation.html', {
-        #     'name': user.email,
-        #     'domain': current_site.domain,
-        #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        #     'token': generate_token.make_token(user),
-        # })
-        # email = EmailMessage(
-        #     email_subject,
-        #     message2,
-        #     from_email,
-        #     [user.email],
-        # )
-        # email.send(fail_silently=True)
-        # Call Celery tasks
-
-        # Welcome email
-
-
-        token = generate_token.make_token(user)
-        # print("token views.py--",token)
-
-        current_site = get_current_site(request)
-        # print("current_site.domain",current_site.domain)
-        send_welcome_email.delay(user.email,current_site.domain,user.pk,token)
-        send_confirmation_email.delay(user.email, user.pk)
+        try:
+            token = generate_token.make_token(user)
+            current_site = get_current_site(request)
+            send_welcome_email.delay(user.email,current_site.domain,user.pk,token)
+            send_confirmation_email.delay(user.email, user.pk)
+        except Exception as e:
+            print("err--------",e)
+            messages.error(request, f"Registration successful, but email could not be sent: {e}")
+            return redirect('Common_page')
 
         return redirect('login')
 
@@ -110,24 +79,26 @@ class EmployerRegistrationView(View):
 
 def activate(request, uidb64, token):
     try:
-        # Decode the uidb64 and get the user
+      
         uid = urlsafe_base64_decode(uidb64).decode()
-        print(f"Decoded UID: {uid}")
         user = get_user_model().objects.get(pk=uid)
-
-        # Check if the token is valid for the user
-        if default_token_generator.check_token(user, token):
-            # Token is valid, activate the user
-            user.is_verified = True
-            user.save()
-            messages.success(request, "Your account has been successfully activated.")
-            print('Your account has been successfully activated.')
-            return redirect('login') 
-        else:
-            # Token is invalid
-            messages.error(request, "The activation link is invalid or has expired.")
-            print('The activation link is invalid or has expired.')
-            return redirect('home-page') 
+        is_valid = default_token_generator.check_token(user, token)
+        print(f"Received Token: {token}")
+        try:
+            if default_token_generator.check_token(user, token):
+                user.is_verified = True
+                user.save()
+                messages.success(request, "Your account has been successfully activated.")
+                print('Your account has been successfully activated.')
+                return redirect('login') 
+            else:
+                messages.error(request, "The activation link is invalid or has expired.")
+                print('The activation link is invalid or has expired.')
+                return redirect('home-page')
+        except Exception as e:
+            messages.error(request, f"An error occurred while activating the account: {e}")
+            print("An error occurred while activating the account: ",e)
+            return redirect('Common_page') 
 
     except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist) as e:
         messages.error(request, "Invalid activation link.")

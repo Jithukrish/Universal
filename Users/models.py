@@ -1,6 +1,6 @@
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager,PermissionsMixin
 from django.utils.text import slugify
 import uuid
 class CustomUserManager(BaseUserManager):
@@ -25,7 +25,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
-class CustomUser(AbstractUser):
+class CustomUser(AbstractUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # slug = models.SlugField(unique=True, blank=True, null=True)
     
@@ -46,14 +46,17 @@ class CustomUser(AbstractUser):
 
     USERNAME_FIELD = 'email'  # Make email the unique identifier
     REQUIRED_FIELDS = [] 
+ 
+    def __str__(self):
+        return self.email or "Unknown Email"
     def save(self, *args, **kwargs):
         print(f"Saving user: {self.email}")
         if not self.email:
             unique_uuid = uuid.uuid4()  
             self.email = f"{unique_uuid}@gmail.com"
         super().save(*args, **kwargs)  
-    def __str__(self):
-        return self.username
+
+    
     
 
 class JobSeekerProfile(models.Model):
